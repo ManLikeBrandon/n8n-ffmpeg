@@ -1,18 +1,13 @@
 FROM n8nio/n8n:latest
 
-# Prevent prompts during install
-ENV DEBIAN_FRONTEND=noninteractive
+# Install ffmpeg using Alpine's package manager
+USER root
+RUN apk update && apk add --no-cache ffmpeg
 
-# Update and install ffmpeg
-RUN apt-get update && \
-    apt-get install -y ffmpeg && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Switch back to the n8n user
+USER node
 
-# Set default working directory
-WORKDIR /home/node
-
-# Expose port
+# Expose the n8n port
 EXPOSE 5678
 
 # Start n8n
