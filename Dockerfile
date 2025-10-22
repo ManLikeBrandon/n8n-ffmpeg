@@ -1,11 +1,18 @@
-FROM n8nio/n8n:latest
+# Use Debian-based n8n image (supports apt-get)
+FROM n8nio/n8n:1.75.0-debian
 
+# Install ffmpeg
 USER root
-RUN apk add --no-cache ffmpeg
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Switch back to node user
 USER node
 
-# Cloud Run expects app to listen on PORT
-ENV N8N_PORT=${PORT}
+# Expose port for Cloud Run
+ENV N8N_PORT=8080
 ENV N8N_HOST=0.0.0.0
 ENV N8N_PROTOCOL=http
 ENV N8N_BASIC_AUTH_ACTIVE=true
